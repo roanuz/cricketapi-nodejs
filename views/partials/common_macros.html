@@ -1,0 +1,217 @@
+{%macro match_overview(card)%}
+<div class="rca-padding {{card.status}}" style="padding-bottom:0;">
+    {% if (card.status != 'started')%}
+    <div class="rca-right rca-basic-text">{{card.start_date.show_date}}</div>
+    {% endif %}
+    <div class="rca-clear"></div>
+    <div class="">
+    
+        <!-- Match Not Started -->
+        {% if (card.status == 'notstarted')%}
+        <div>
+            <h3 class="rca-match-title rca-theme-text">
+                <span>{{card.teams.a.short_name}}</span>
+                vs
+                <span>{{card.teams.b.short_name}}</span>
+            </h3>
+        
+            <p class="rca-match-info">
+                <span>{{card.format}} - {{card.related_name}}</span>
+            </p>
+            <div class="rca-top-padding">
+                <div class="rca-teams rca-table">
+                <span class="team rca-cell">{{card.teams.a.name}}</span>
+                <span class="rca-vs rca-cell"></span>
+                <span class="team rca-cell">{{card.teams.b.name}}</span>
+                </div>
+            </div>
+            <div class="rca-match-start">
+                <h3>Starts in</h3>
+                <div class="rca-padding">
+                <h2>{{card.start_date.str}}</h2>
+                <p class="rca-center">{{card.start_date.iso}} (local time)</p>
+                <div class="rca-center">{{card.msgs.info}}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Match Started -->
+        {% elif (card.status == 'started') %}
+        <div>
+            <div class="rca-live-label">
+                <span>{{card.teams.a.short_name}}</span>
+                vs
+                <span>{{card.teams.b.short_name}}</span>
+            </div>
+            <div class="rca-clear"></div>
+            <div>
+                <h3 class="rca-match-title">
+                <a href="{{card.ref}}" target="{{card.window_target}}">
+                    {{card.teams[card.now.batting_team].key}} :
+                    {{card.innings[card.now.batting_team + '_'+card.now.innings].runs}}/{{card.innings[card.now.batting_team + '_'+card.now.innings].wickets}} in {{card.innings[card.now.batting_team + '_'+card.now.innings].overs}}
+                    {%if (card.now.innings=='2')%}
+                    <span>
+                    &amp; {{card.innings[card.now.batting_team + '_1']['run_str']}}
+                    </span>
+                    {%endif%}
+                </a>
+                </h3>
+                <p class="rca-match-info">
+                <span>CRR:{{card.now.run_rate}}</span>
+                {%if (card.now.req.runs_rate) %}
+                <span>Req RR:{{card.now.req.runs_rate}}</span>
+                {%endif%}
+                </p>
+                {% if (card.allInnings[(card.now.bowling_team+ '_'+card.now.innings)].bowling_order.length > 0)%}
+                <p class="rca-match-info">
+                <span>{{card.teams[card.now.bowling_team].key}} :
+                {{card.innings[card.now.bowling_team + '_'+card.now.innings].runs}}/{{card.innings[card.now.bowling_team + '_'+card.now.innings].wickets}} in {{card.innings[card.now.bowling_team + '_'+card.now.innings].overs}}
+                {% if(card.now.innings=='2' and card.innings[card.now.bowling_team + '_1'].balls>0) %}
+                <span>
+                    &amp; {{card.innings[card.now.bowling_team + '_1'].run_str}}
+                </span>
+                {%endif%}
+                </span>
+                </p>
+                {%endif%}
+                {%for inn in card.now.innings %}
+                <div>
+                <div class="rca-top-padding">
+                    <div class="rca-batsman striker" >
+                        <span class="player">{{ card.players[card.now.striker].name if card.players[card.now.striker].name else "Waiting for batsman"}} <sup>*</sup></span>
+                    <span>{{card.players[card.now.striker].match.innings[inn].batting.runs if card.players[card.now.striker].match.innings[inn].batting.runs else "0"}}({{card.players[card.now.striker].match.innings[inn].batting.balls if card.players[card.now.striker].match.innings[inn].batting.balls else "0"}})</span>
+                    </div>
+        
+                    <div class="rca-batsman" >
+                        <span class="player">{{card.players[card.now.nonstriker].name}}</span>
+                    <span>{{card.players[card.now.nonstriker].match.innings[inn].batting.runs if card.players[card.now.nonstriker].match.innings[inn].batting.runs else "0"}}({{card.players[card.now.nonstriker].match.innings[inn].batting.balls if card.players[card.now.nonstriker].match.innings[inn].batting.balls else "0"}})</span>
+                    </div>
+                </div>
+                <div class="rca-ball-detail">
+                    <div class="rca-match-schedule">
+                    Over: {{card.innings[(card.now.batting_team+ '_'+card.now.innings)].overs if card.innings[(card.now.batting_team+ '_'+card.now.innings)].overs else "0.0"}}
+                    </div>
+                    {%if (ball_by_ball == 'yes')%}
+                    <ul class="rca-ball-by">
+                    <li class="b6">6</li>
+                    <li class="">1wd</li>
+                    <li class="w">w</li>
+                    <li class="">1</li>
+                    <li class="">2</li>
+                    <li class="b4">4</li>
+                    </ul>
+                    {%endif%}
+                    <div class="rca-bowler-info">
+                    {%if(card.status_overview == 'stumps') %}
+                    <span>Stumps day {{card.day}} !</span>
+                    {%elif (card.status_overview == 'in_play')%}
+                    <span>{{card.players[card.now.bowler].name if card.players[card.now.bowler].name else "Waiting for bowler"}} </span>
+                    {%elif (card.players[card.now.bowler].name)%}
+                    <span class="rca-bolwing">{{card.players[card.now.bowler].match.innings[('1')].bowling.runs}}/{{card.players[card.now.bowler].match.innings[('1')].bowling.wickets}} in {{card.players[card.now.bowler].match.innings[('1')].bowling.overs}}</span>
+                    {%endif%}
+                    </div>
+                </div>
+                </div>
+                {%endfor%}
+            </div>
+            <div class="rca-top-padding rca-score-status">
+                <div class="rca-status-scroll">
+                {{card.now.last_ball.comment}}
+                </div>
+                <!--  <ul class="rca-bullet-list">
+                <li class="active" data-tab="#status1"></li>
+                <li data-tab="#status2"></li>
+                <li data-tab="#status3"></li>
+                </ul> -->
+            </div>
+        </div>
+        {% elif (card.status == 'completed')%}
+        <!-- Match Completed -->
+        <div>
+        <h3 class="rca-match-title rca-theme-text">
+            {{card.msgs.info}}
+            </h3>
+            <p class="rca-match-info">
+            <span>{{card.format}} - {{card.related_name}}</span>
+            </p>
+            <div class="rca-top-padding">
+            {% for teamKey in ['a','b'] %}
+            <div class="rca-team-score">
+                <span class="team">{{card.teams[teamKey].name}}</span>
+                <span>
+                {{card.innings[teamKey + '_1'].run_str}}
+                {%if (card.innings[teamKey + '_2'].run_str and card.innings[teamKey + '_2'].balls>0) %}
+                <span>
+                &amp; {{card.innings[teamKey + '_2'].run_str}}
+                </span>
+                {%endif%}
+            </div>
+            {%endfor%}
+            </div>
+    
+            <!-- Man Of Match Details -->
+            <div class="rca-man-match">
+            <h3>Man of the Match <span>{{card.players[card.man_of_match].fullname}}</span></h3>
+            <div class="rca-padding">
+                <p class="rca-man-match-record">
+                <span class="title">Runs</span>
+                <span>
+                    {{card.players[card.manofMatch].match.innings['1'].batting.runs if card.players[card.man_of_match].match.innings['1'].batting.runs else "0"}}({{card.players[card.man_of_match].match.innings['1'].batting.balls if card.players[card.man_of_match].match.innings['1'].batting.balls else "0"}})
+                </span>
+                </p>
+                <p class="rca-man-match-record">
+                <span class="title">Boundries</span>
+                <span>
+                    {{card.players[card.man_of_match].match.innings['1'].batting.fours}}x4, {{card.players[card.man_of_match].match.innings['1'].batting.sixes}}x6
+                </span>
+                </p>
+                <p class="rca-man-match-record">
+                <span class="title">Wickets</span>
+                {%if (card.players[card.man_of_match].match.innings['1'].bowling and card.players[card.man_of_match].match.innings['1'].bowling.balls > 0) %}
+                <span>
+                    {{card.players[card.man_of_match].match.innings['1'].bowling.runs if card.players[card.man_of_match].match.innings['1'].bowling.runs else "0"}}/{{card.players[card.man_of_match].match.innings['1'].bowling.wickets if card.players[card.man_of_match].match.innings['1'].bowling.wickets else 0}} ({{card.players[card.man_of_match].match.innings['1'].bowling.overs if card.players[card.man_of_match].match.innings['1'].bowling.overs else "0"}})
+                </span>
+                {%endif%}
+                {%if (card.players[card.man_of_match].match.innings['2'].bowling and card.players[card.man_of_match].match.innings['2'].bowling.balls > 0) %}
+                <span>
+                    , {{card.players[card.man_of_match].match.innings['2'].bowling.runs if card.players[card.man_of_match].match.innings['2'].bowling.runs else "0"}}/{{card.players[card.man_of_match].match.innings['2'].bowling.wickets if card.players[card.man_of_match].match.innings['2'].bowling.wickets else 0}} ({{card.players[card.man_of_match].match.innings['2'].bowling.overs if card.players[card.man_of_match].match.innings['2'].bowling.overs else "0"}})
+                </span>
+                {%endif%}
+                </p>
+            </div>
+            </div>
+        </div>
+        {%endif%}
+    </div>
+    
+        <!-- Match Venue, Series, Time & Toss Details Card -->
+    <div class="rca-mini-widget rca-history-info">
+        <div class="rca-row">
+        <span class="rca-col rca-history-title">Match: df</span>
+        <span class="rca-col"> {{card.teams.a.name}} vs {{card.teams.b.name}} - {{card.related_name}}</span>
+        </div>
+        <div class="rca-row">
+        <span class="rca-col rca-history-title">Series:</span>
+        <span class="rca-col"> {{card.season.name}} </span>
+        </div>
+        <div class="rca-row">
+        <span class="rca-col rca-history-title">Date (GMT):</span>
+        <span class="rca-col"> {{card.start_date.str}} </span>
+        </div>
+        <div class="rca-row">
+        <span class="rca-col rca-history-title">Venue:</span>
+        <span class="rca-col"> {{card.venue}} </span>
+        </div>
+        <div class="rca-row">
+        <span class="rca-col rca-history-title">Match Type:</span>
+        <span class="rca-col"> {{card.format}} </span>
+        </div>
+        {%if (card.toss.str)%}
+        <div class="rca-row">
+        <span class="rca-col rca-history-title">Toss:</span>
+        <span class="rca-col"> {{card.toss.str}} </span>
+        </div>
+        {%endif%}
+    </div>
+</div>
+{%endmacro%}

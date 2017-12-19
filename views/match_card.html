@@ -1,0 +1,26 @@
+<!-- index.nunjucks -->
+{% extends "./base_template.html" %}
+{%import "./partials/common_macros.html" as commonMacros %}
+{% block header %}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{{card.title}}</title>
+  <meta name="description" content="" />
+  <meta name="keywords" content="" />
+
+{% endblock %}
+
+{% block content %}
+<div class="rca-container">
+  <div class="rca-row rca-nopadding">
+    <div class="rca-column-6">
+      <div class="rca-medium-widget rca-top-border">
+        {{commonMacros.match_overview(card)}}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
