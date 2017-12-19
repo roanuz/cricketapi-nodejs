@@ -1,6 +1,6 @@
-# CricketAPI - NodeJS 
+# Cricket API - NodeJS 
 
-**The Boiler plate using NODEJS, Nunjucks and Memcache to develop a sports App to show cricket Score using Roanuz CricketAPI apis**
+**The Boiler plate using NODEJS, Nunjucks and Memcache to develop a sports App to show cricket Score using Roanuz Cricket API apis**
 
 **Initial configuration**
 
