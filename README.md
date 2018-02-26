@@ -15,6 +15,15 @@ SC_PORT = any port default 4000
 SC_ENABLE_MEMCACHE = false
 ```
 
+**Follow the simple steps to get Roanuz Cricket API Access Key & Secret Key:**
+
+Get Enrolled with Roanuz Cricket API using following Link: https://www.cricketapi.com/register/
+
+Fill the missing information on [My Apps](https://www.cricketapi.com/login/?next=/apps/) page to get the Access Token for your App.
+Now you should be able to see the Access key and Secret key in your App Details page mentioned below.
+
+![Recent Matches Output](server/assets/images/app_keys.png)
+
 **Install Dependencies**
 
 `npm install` to make sure all the packages are installed.
