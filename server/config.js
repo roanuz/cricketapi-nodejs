@@ -12,7 +12,12 @@ class AppConfig {
     constructor() {
         this.name = 'CricketAPI Spider';
         this.port = envFor("PORT", 4000);
-
+        this.enable_memcache = envFor("ENABLE_MEMCACHE", false);
+        if (this.enable_memcache == 'true'){
+            this.enable_memcache = true;
+        } else {
+            this.enable_memcache = false;
+        }
         this.path = {
             static: '/static'
         };

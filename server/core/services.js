@@ -12,6 +12,8 @@ var CacherLogic = require('./cacherLogics');
 let host = Config.backend.host
 let lastQuery = {}
 
+let memCacheEnable = Config.enable_memcache
+
 class CricketAPIServices {
     constructor() {
         this.formateUrl = '',
@@ -58,6 +60,47 @@ class CricketAPIServices {
             })
         });
     }
+    recentMatchesResponse(){
+        let apiPath = '/rest/v2/recent_matches/';
+        let params = {}
+        let cacheKey = 'recent_matches';
+        return new Promise((resolve, reject) => {
+            if (memCacheEnable) {
+                CacherLogic.getCachedData(cacheKey).then((cachedResponse)=>{
+                    if(cachedResponse&& cachedResponse != null) {
+                        resolve(cachedResponse)
+                    } else {
+                        resolve(this.getData(apiPath, params));
+                    }
+                });
+            } else {
+                resolve(this.getData(apiPath, params));
+            }
+            console.error('Oops we have an error', err);
+        });
+    }
+
+    getMatchResponse(matchId){
+        let apiPath = '/rest/v2/match/'+matchId+'/';
+        let params = {}
+        let cacheKey = 'match|'+matchId+'|full_card';
+        return new Promise((resolve, reject) => {
+            if (memCacheEnable) {
+                CacherLogic.getCachedData(cacheKey).then((cachedResponse)=>{
+                    if(cachedResponse&& cachedResponse != null) {
+                        resolve(cachedResponse)
+                    } else {
+                        resolve(this.getData(apiPath, params));
+                    }
+                });
+            } else {
+                resolve(this.getData(apiPath, params));
+            }
+        }).catch(function(err) {
+            console.error('Oops we have an error', err);
+            reject(err);
+        });
+    }
 
     getData(source_path, queryParams={}){
         
@@ -66,7 +109,7 @@ class CricketAPIServices {
             newHost = Config.backend.spiderHost
         }
 
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             if(queryParams.hasOwnProperty("access_token")) {
                queryParams.access_token = Token.key
             } else {
@@ -105,10 +148,10 @@ class CricketAPIServices {
                             console.log("catch",res);
                         })
                     } else {
-                        if(body.status_code == 200){
+                        if(body.status_code == 200 && memCacheEnable){
                             CacherLogic.setCache(body.data.card.cache_key, body.data, body.expires);
                         }
-                        resolve(body);
+                        resolve(body.data);
                     }                    
                 }
             })
