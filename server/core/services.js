@@ -6,13 +6,17 @@ let Config = require('../config');
 let Token = require('./auth')
 const querystring = require('querystring');
 
-var CacherLogic = require('./cacherLogics');
+var CacherLogic;
 
 // configuring backend host 
 let host = Config.backend.host
 let lastQuery = {}
 
 let memCacheEnable = Config.enable_memcache
+
+if (memCacheEnable){
+    CacherLogic = require('./cacherLogics');
+}
 
 class CricketAPIServices {
     constructor() {
@@ -62,21 +66,12 @@ class CricketAPIServices {
     }
     recentMatchesResponse(){
         let apiPath = '/rest/v2/recent_matches/';
-        let params = {}
-        let cacheKey = 'recent_matches';
+        let params = {};
         return new Promise((resolve, reject) => {
-            if (memCacheEnable) {
-                CacherLogic.getCachedData(cacheKey).then((cachedResponse)=>{
-                    if(cachedResponse&& cachedResponse != null) {
-                        resolve(cachedResponse)
-                    } else {
-                        resolve(this.getData(apiPath, params));
-                    }
-                });
-            } else {
-                resolve(this.getData(apiPath, params));
-            }
+            resolve(this.getData(apiPath, params));
+        }).catch(function(err) {
             console.error('Oops we have an error', err);
+            reject(err);
         });
     }
 
@@ -103,7 +98,7 @@ class CricketAPIServices {
     }
 
     getData(source_path, queryParams={}){
-        
+        console.log('getdata called')
         let newHost = host
         if (source_path.startsWith('/rest/add-on/spider-')) {
             newHost = Config.backend.spiderHost
@@ -149,7 +144,9 @@ class CricketAPIServices {
                         })
                     } else {
                         if(body.status_code == 200 && memCacheEnable){
-                            CacherLogic.setCache(body.data.card.cache_key, body.data, body.expires);
+                            if (body.data.card && body.data.card.cache_key){
+                                CacherLogic.setCache(body.data.card.cache_key, body.data, body.expires);
+                            }
                         }
                         resolve(body.data);
                     }                    

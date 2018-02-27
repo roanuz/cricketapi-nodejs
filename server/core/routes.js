@@ -1,7 +1,7 @@
 var express = require('express'),
 router = express.Router();
 var CricketAPIServices = require('./services');
-var CacherLogic = require('./cacherLogics');
+// var CacherLogic = require('./cacherLogics');
 
 router.get('/', function(req, res) {
     CricketAPIServices.recentMatchesResponse().then((response)=>{
