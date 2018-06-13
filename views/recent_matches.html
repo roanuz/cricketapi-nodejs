@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Cricket | Roanuz Cricket API</title>
+  <title>Recent Matches | Roanuz Cricket API</title>
   <meta name="description" content="" />
   <meta name="keywords" content="" />
 
@@ -18,7 +18,7 @@
       <div class="rca-column-12">
         <div class="rca-blog-image">
           <h2 style="padding: 20px 0; font-weight: 300; color: #000;">
-            Data From Roanuz CricketAPI - for more details <a href="https://www.cricketapi.com/docs/" target="_blank"> Click here.</a>
+            Data From Recent Matches API - for more details <a href="https://www.cricketapi.com/docs/recent_match_api/" target="_blank"> Click here.</a>
           </h2>
         </div>
       </div>
@@ -28,16 +28,13 @@
         <!--Widget Inner -->
         <div class="rca-menu-scroll rca-left-border">
           <ul class="rca-season-list">
+            {% for card in cards%}
             <li>
-              <a href="/recent-matches/">
-                Recent Matches
+              <a href="/match/{{card.key}}/">
+                {{card.short_name}}
               </a>
             </li>
-            <li>
-              <a href="/schedule/">
-                Current Month Schedule
-              </a>
-            </li>
+            {%endfor%}
           </ul>
         </div>
       </div>

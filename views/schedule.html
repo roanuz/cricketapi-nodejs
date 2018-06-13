@@ -1,0 +1,84 @@
+<!-- index.nunjucks -->
+{% extends "./base_template.html" %}
+{%import "./partials/common_macros.html" as commonMacros %}
+{% block header %}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Schedule API | Roanuz Cricket API</title>
+  <meta name="description" content="" />
+  <meta name="keywords" content="" />
+
+{% endblock %}
+
+{% block content %}
+  <div class="rca-container">
+    <div class="rca-row">
+      <div class="rca-column-12">
+        <div class="rca-blog-image">
+          <h2 style="padding: 20px 0; font-weight: 300; color: #000;">
+            Data From Schedule API - for more details <a href="https://www.cricketapi.com/docs/Core-API/Schedule-API/" target="_blank"> Click here.</a>
+          </h2>
+        </div>
+      </div>
+    </div>
+    <div class="rca-row">
+        <div class="rca-column-12">
+            <!--Widget Inner -->
+            <div class="rca-schedule-widget">
+            <h2>INTERNATIONAL CRICKET SCHEDULES</h2>
+            <div class="rca-schedule-top">
+                <span>{{dateFormat(current_month, 'MMM YYYY')}}</span>
+                <span class="rca-right">
+                <a class="" href="#">
+                    <span>MONTH</span>
+                </a>
+                <a class="active" href="#">
+                    <span>LIST</span>
+                </a>
+                </span>
+            </div>
+            <!--Match Monthly Schedule-->
+            <div class="rca-mini-widget rca-top-border">
+                <ul class="rca-tab-list">
+                    <li class="rca-tab-link" data-tab="stab-1">
+                        <a href="/schedule/{{prev_month}}/">{{dateFormat(prev_month, 'MMM YYYY')}}</a>
+                    </li>
+                    <li class="rca-tab-link active" data-tab="stab-2">
+                        <a href="/schedule/{{current_month}}/">{{dateFormat(current_month, 'MMM YYYY')}}</a>
+                    </li>
+                    <li class="rca-tab-link" data-tab="tab-3">
+                        <a href="/schedule/{{next_month}}/">{{dateFormat(next_month, 'MMM YYYY')}}</a>
+                    </li>
+                </ul>
+                <div id="stab-1" class="rca-padding rca-tab-content active">
+                    {% for day in months[0].days%}
+                        {% if day.matches |length > 0%}
+                            {{commonMacros.dateMatches(day, current_month)}}
+                        {%endif%}
+                    {%endfor%}
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    function showTab(event) {
+        var sourceParent = event.parentElement.parentElement;
+        var sourceChilds = sourceParent.getElementsByClassName("rca-tab-content");
+        var sourceLinkParent = sourceParent.getElementsByClassName("rca-tab-link");
+        for (var i=0; i < sourceChilds.length; i++) {
+          sourceChilds.item(i).classList.remove("active");
+        }
+        for (var i=0; i < sourceLinkParent.length; i++) {
+          sourceLinkParent.item(i).classList.remove("active");
+        }
+        var dataTab= event.getAttribute("data-tab");
+
+        event.classList.add("active");
+        document.getElementById(dataTab).className += ' active';
+    }
+  </script>
+{% endblock %}

@@ -215,3 +215,24 @@
     </div>
 </div>
 {%endmacro%}
+
+{% macro dateMatches(dateInfo, month) %}
+    <div class="rca-schedule-date">
+        <h4>{{dateFormat(month + '-' + dateInfo.day , 'Do MMM YYYY')}}</h4>
+        {% for match in dateInfo.matches %}
+            {{rowMatchCard(match)}}
+        {%endfor%}
+    </div>
+{%endmacro%}
+
+{%macro rowMatchCard(match) %}
+    <div class="rca-schedule-detail rca-test">
+        <h2>
+            <a href="/match/{{match.key}}/" title="{{match.short_name}}">
+                <span class="rca-team">{{match.short_name}}</span>
+                <span class="rca-match-time">{{dateFormat(match.start_date.iso , 'h:mm:ss a')}}</span>
+            </a>
+        </h2>
+        <p>{{match.related_name}} - {{match.venue}}</p>
+    </div>
+{%endmacro%}

@@ -75,6 +75,20 @@ class CricketAPIServices {
         });
     }
 
+    scheduleResponse(month){
+        let apiPath = '/rest/v2/schedule/';
+        let params = {};
+        if (month) {
+            params['date'] = month
+        }
+        return new Promise((resolve, reject) => {
+            resolve(this.getData(apiPath, params));
+        }).catch(function(err) {
+            console.error('Oops we have an error', err);
+            reject(err);
+        });
+    }
+
     getMatchResponse(matchId){
         let apiPath = '/rest/v2/match/'+matchId+'/';
         let params = {}
